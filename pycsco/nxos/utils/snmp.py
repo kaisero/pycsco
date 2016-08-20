@@ -50,16 +50,31 @@ def get_snmp_community(device, find_filter=None):
         comm_table = data_dict['ins_api']['outputs']['output']['body'].get(
             'TABLE_snmp_community')['ROW_snmp_community']
 
-        for each in comm_table:
+       if type(comm_table) is list:
+            for each in comm_table:
+                community = {}
+                key = str(each['community_name'])
+                community['group'] = str(each['grouporaccess'])
+                community['acl'] = str(each['aclfilter'])
+                c_dict[key] = community
+        else:
             community = {}
-            key = str(each['community_name'])
-            community['group'] = str(each['grouporaccess'])
-            community['acl'] = str(each['aclfilter'])
+            key = str(comm_table['community_name'])
+            community['group'] = str(comm_table['grouporaccess'])
+            community['acl'] = str(comm_table['aclfilter'])
             c_dict[key] = community
 
     except (TypeError):
+        if type(comm_table) is list:
+            for each in comm_table:
+                community = {}
+                key = str(each['community_name'])
+                community['group'] = str(each['grouporaccess'])
+                community['acl'] = str(each['aclfilter'])
+                c_dict[key] = community
+        else:
             community = {}
-            key = str(each['community_name'])
+            key = str(comm_table['community_name'])
             community['group'] = str(comm_table['grouporaccess'])
             community['acl'] = str(comm_table['aclfilter'])
             c_dict[key] = community
